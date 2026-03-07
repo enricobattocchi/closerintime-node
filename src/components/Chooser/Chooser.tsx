@@ -13,6 +13,8 @@ import AddEventForm from "./AddEventForm";
 import Timeline from "@/components/Timeline/Timeline";
 import Sentence from "@/components/Sentence";
 import SettingsModal from "@/components/SettingsModal";
+import HelpOutline from "@mui/icons-material/HelpOutline";
+import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
 import HelpModal from "@/components/HelpModal";
 import styles from "@/styles/Chooser.module.css";
 
@@ -138,20 +140,20 @@ export default function Chooser({
         <div className={styles.headingRow}>
           <p className={styles.heading}>Pick some events</p>
           <button
-            className={styles.helpButton}
+            className={styles.iconButton}
             onClick={() => setShowHelp(true)}
             aria-label="Help"
             title="Help"
           >
-            ?
+            <HelpOutline sx={{ fontSize: 20 }} />
           </button>
           <button
-            className={styles.settingsButton}
+            className={styles.iconButton}
             onClick={() => setShowSettings(true)}
             aria-label="Settings"
             title="Settings"
           >
-            &#9881;
+            <SettingsOutlined sx={{ fontSize: 20 }} />
           </button>
         </div>
         {slots.map((event, i) => (

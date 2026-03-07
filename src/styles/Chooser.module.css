@@ -17,42 +17,18 @@
   color: var(--color-text-light);
 }
 
-.helpButton {
-  background: none;
-  border: 1px solid var(--color-text-light);
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: var(--color-text-light);
-  padding: 0;
-  margin-left: 8px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.helpButton:hover {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.settingsButton {
+.iconButton {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
   color: var(--color-text-light);
   padding: 0;
-  margin-left: 6px;
-  line-height: 1;
-  vertical-align: middle;
+  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
 }
 
-.settingsButton:hover {
+.iconButton:hover {
   color: var(--color-primary);
 }
 
