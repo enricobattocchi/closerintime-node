@@ -1,0 +1,196 @@
+.chooser {
+  max-width: 600px;
+  margin: 24px auto 0;
+  padding: 0 16px;
+}
+
+.headingRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.heading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--color-text-light);
+}
+
+.helpButton {
+  background: none;
+  border: 1px solid var(--color-text-light);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--color-text-light);
+  padding: 0;
+  margin-left: 8px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.helpButton:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.settingsButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-light);
+  padding: 0;
+  margin-left: 6px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.settingsButton:hover {
+  color: var(--color-primary);
+}
+
+.slot {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+}
+
+.input:disabled {
+  background: #f5f5f5;
+  color: var(--color-text);
+}
+
+.selectedIcon {
+  display: flex;
+  align-items: center;
+  color: var(--color-primary);
+}
+
+.cancelButton {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-light);
+  padding: 0;
+}
+
+.cancelButton:hover {
+  color: var(--color-text);
+}
+
+.linkButton {
+  display: flex;
+  align-items: center;
+  color: var(--color-blue);
+  text-decoration: none;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 200;
+  margin-top: 2px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: #f5f5f5;
+}
+
+.optionIcon {
+  flex: 0 0 24px;
+  color: var(--color-primary);
+}
+
+.optionName {
+  flex: 1;
+}
+
+.optionName::first-letter {
+  text-transform: uppercase;
+}
+
+.optionYear {
+  flex: 0 0 auto;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.noResults {
+  padding: 12px;
+  text-align: center;
+  color: var(--color-text-light);
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--color-text-light);
+}
+
+.deleteButton:hover {
+  color: var(--color-text);
+}
+
+.addIconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--color-text-light);
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.addIconButton:hover {
+  color: var(--color-primary);
+}

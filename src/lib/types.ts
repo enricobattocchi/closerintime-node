@@ -1,0 +1,35 @@
+export interface Event {
+  id: number;
+  name: string;
+  year: number;
+  month: number | null;
+  day: number | null;
+  type: string;
+  enabled: number;
+  plural: number;
+  link: string | null;
+}
+
+export interface MarkerData {
+  event: Event;
+  label: string;
+  position: number; // 0–100 percentage
+}
+
+export interface SegmentData {
+  startLabel: string;
+  endLabel: string;
+  spanLabel: string;
+  percentage: number;
+  order: number;
+  total: number;
+}
+
+export interface TimelineResult {
+  markers: MarkerData[];
+  segments: SegmentData[];
+  totalDays: number;
+  yearsOnly: boolean;
+}
+
+export type TimespanFormat = 0 | 1 | 2; // 0=days, 1=years only, 2=precise

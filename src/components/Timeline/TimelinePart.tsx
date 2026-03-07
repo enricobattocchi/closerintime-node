@@ -1,0 +1,25 @@
+import type { SegmentData } from "@/lib/types";
+import styles from "@/styles/Timeline.module.css";
+
+interface TimelinePartProps {
+  segment: SegmentData;
+}
+
+export default function TimelinePart({ segment }: TimelinePartProps) {
+  const hue = 115 + (360 * segment.order) / segment.total;
+  const color = `hsl(${hue}, 65%, 50%)`;
+
+  return (
+    <div
+      className={styles.part}
+      style={{
+        flexGrow: segment.percentage,
+        borderColor: color,
+      }}
+    >
+      <span className={styles.partLabel} style={{ color }}>
+        {segment.spanLabel}
+      </span>
+    </div>
+  );
+}

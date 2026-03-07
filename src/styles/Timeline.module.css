@@ -1,0 +1,159 @@
+.empty {
+  min-height: 200px;
+}
+
+.timeline {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 150px;
+  margin-bottom: 50px;
+  padding: 0 7vw;
+}
+
+.marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 0;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.marker:hover {
+  z-index: 100;
+}
+
+.markerCircle {
+  width: var(--timeline-marker-size);
+  height: var(--timeline-marker-size);
+  min-width: var(--timeline-marker-size);
+  min-height: var(--timeline-marker-size);
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.markerInfo {
+  margin-top: 5px;
+  text-align: center;
+  width: 10vw;
+  background: white;
+  padding: 7px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.markerDate {
+  display: block;
+  font-size: 0.8em;
+  color: var(--color-text-light);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.markerName {
+  display: block;
+  font-size: 0.8em;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.markerName::first-letter {
+  text-transform: uppercase;
+}
+
+.markerClickable {
+  cursor: pointer;
+}
+
+a.marker {
+  text-decoration: none;
+  color: inherit;
+}
+
+a.marker:hover .markerCircle {
+  box-shadow: 0 0 0 3px rgba(139, 34, 82, 0.4);
+}
+
+a.marker:hover .markerName {
+  text-decoration: underline;
+}
+
+.part {
+  position: relative;
+  border-bottom: solid 6px;
+  height: 0;
+  top: 22px;
+  z-index: 0;
+  min-width: 4px;
+}
+
+.partLabel {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -28px;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+@media (max-width: 960px) {
+  .markerInfo {
+    width: 20vw;
+  }
+}
+
+/* Vertical layout for mobile */
+@media (max-width: 640px) {
+  .timeline {
+    flex-direction: column;
+    margin-top: 80px;
+    margin-left: 20vw;
+    min-height: 600px;
+    padding: 0;
+  }
+
+  .marker {
+    flex-direction: row;
+    width: auto;
+    height: 0;
+  }
+
+  .markerInfo {
+    margin-top: 0;
+    margin-left: 5px;
+    text-align: left;
+    width: 50vw;
+  }
+
+  .part {
+    border-bottom: none;
+    border-left: solid 6px;
+    height: unset;
+    width: 20vw;
+    top: unset;
+    left: 22px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 30px;
+  }
+
+  .partLabel {
+    position: relative;
+    left: auto;
+    top: 0;
+    transform: none;
+    right: 25vw;
+    width: 20vw;
+    text-align: right;
+    white-space: normal;
+  }
+}
