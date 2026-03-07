@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 import type { Event } from "@/lib/types";
 import { getEventsByIds, getEnabledEvents } from "@/lib/events";
 import { computeTimeline } from "@/lib/timeline-math";
@@ -42,7 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!parsed) return { title: "closerintime" };
 
   const serverEvents = parsed.serverIds.length > 0
-    ? getEventsByIds(parsed.serverIds)
+    ? await getEventsByIds(parsed.serverIds)
     : [];
   const allEvents = [...serverEvents, ...parsed.customEvents];
   if (allEvents.length === 0) return { title: "closerintime" };
@@ -77,7 +79,7 @@ export default async function EventPage({ params }: PageProps) {
   }
 
   const serverEvents = sortedServerIds.length > 0
-    ? getEventsByIds(sortedServerIds)
+    ? await getEventsByIds(sortedServerIds)
     : [];
 
   if (sortedServerIds.length > 0 && serverEvents.length === 0) {
@@ -85,7 +87,7 @@ export default async function EventPage({ params }: PageProps) {
   }
 
   const allSelectedEvents = [...serverEvents, ...parsed.customEvents];
-  const allEvents = getEnabledEvents();
+  const allEvents = await getEnabledEvents();
   const timeline = computeTimeline(allSelectedEvents);
   const sentence = generateSentence(allSelectedEvents);
   const href = buildShareablePath(serverEvents, parsed.customEvents);

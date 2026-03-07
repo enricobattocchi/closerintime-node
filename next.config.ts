@@ -7,7 +7,6 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["better-sqlite3"],
   turbopack: {},
 };
 

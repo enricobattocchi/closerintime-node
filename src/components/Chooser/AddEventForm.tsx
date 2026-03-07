@@ -22,6 +22,13 @@ const months = [
   "July", "August", "September", "October", "November", "December",
 ];
 
+const EVENT_TYPES = [
+  "art", "book", "building", "computer", "film",
+  "history", "music", "pop culture", "science", "sport",
+];
+
+const WIKIPEDIA_RE = /^https:\/\/[a-z]{2,}\.wikipedia\.org\/wiki\/.+$/;
+
 export default function AddEventForm({ onSave, onCancel }: AddEventFormProps) {
   const [name, setName] = useState("");
   const [year, setYear] = useState("");
@@ -29,6 +36,11 @@ export default function AddEventForm({ onSave, onCancel }: AddEventFormProps) {
   const [day, setDay] = useState("");
   const [plural, setPlural] = useState(0);
   const [error, setError] = useState("");
+  const [submitForEveryone, setSubmitForEveryone] = useState(false);
+  const [type, setType] = useState("history");
+  const [link, setLink] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const yearNum = parseInt(year);
   const monthNum = parseInt(month);
@@ -37,7 +49,7 @@ export default function AddEventForm({ onSave, onCancel }: AddEventFormProps) {
       ? daysInMonth(yearNum, monthNum - 1)
       : 31;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) {
       setError("Name is required");
       return;
@@ -55,6 +67,47 @@ export default function AddEventForm({ onSave, onCancel }: AddEventFormProps) {
       return;
     }
 
+    if (submitForEveryone) {
+      if (!link.trim() || !WIKIPEDIA_RE.test(link.trim())) {
+        setError("A valid Wikipedia URL is required (e.g. https://en.wikipedia.org/wiki/...)");
+        return;
+      }
+
+      setSubmitting(true);
+      setError("");
+      try {
+        const res = await fetch("/api/submissions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name.trim(),
+            year: yearNum,
+            month: month ? monthNum : null,
+            day: month && day ? parseInt(day) : null,
+            type,
+            plural,
+            link: link.trim(),
+          }),
+        });
+        if (res.status === 429) {
+          setError("Too many submissions. Please try again later.");
+          return;
+        }
+        if (!res.ok) {
+          const data = await res.json();
+          setError(data.error || "Submission failed");
+          return;
+        }
+        setSubmitted(true);
+        setTimeout(() => onCancel(), 2000);
+      } catch {
+        setError("Network error");
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
     onSave({
       name: name.trim(),
       year: yearNum,
@@ -65,6 +118,14 @@ export default function AddEventForm({ onSave, onCancel }: AddEventFormProps) {
       link: null,
     });
   };
+
+  if (submitted) {
+    return (
+      <div className={styles.form}>
+        <p className={styles.success}>Submitted for review. Thank you!</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.form}>
@@ -145,13 +206,55 @@ export default function AddEventForm({ onSave, onCancel }: AddEventFormProps) {
           </label>
         </div>
       </div>
+
+      <div className={styles.field}>
+        <label className={styles.toggleLabel}>
+          <input
+            type="checkbox"
+            checked={submitForEveryone}
+            onChange={(e) => setSubmitForEveryone(e.target.checked)}
+          />
+          Submit for everyone
+        </label>
+      </div>
+
+      {submitForEveryone && (
+        <>
+          <div className={styles.field}>
+            <label className={styles.label}>Category *</label>
+            <select
+              className={styles.input}
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              {EVENT_TYPES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>Wikipedia link *</label>
+            <input
+              className={styles.input}
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder="https://en.wikipedia.org/wiki/..."
+            />
+          </div>
+        </>
+      )}
+
       {error && <p className={styles.error}>{error}</p>}
       <div className={styles.actions}>
         <button className={styles.cancelBtn} onClick={onCancel}>
           Cancel
         </button>
-        <button className={styles.saveBtn} onClick={handleSubmit}>
-          Save
+        <button
+          className={styles.saveBtn}
+          onClick={handleSubmit}
+          disabled={submitting}
+        >
+          {submitting ? "Submitting..." : submitForEveryone ? "Submit for review" : "Save"}
         </button>
       </div>
     </div>

@@ -130,7 +130,7 @@
 
 .option {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   padding: 10px 12px;
   cursor: pointer;
@@ -142,6 +142,9 @@
 
 .optionIcon {
   flex: 0 0 24px;
+  height: 1.5em;
+  display: flex;
+  align-items: center;
   color: var(--color-primary);
 }
 

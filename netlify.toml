@@ -1,0 +1,5 @@
+[dev]
+  command = "next dev"
+  targetPort = 3000
+  port = 8888
+  autoLaunch = false

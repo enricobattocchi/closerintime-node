@@ -33,3 +33,15 @@ export interface TimelineResult {
 }
 
 export type TimespanFormat = 0 | 1 | 2; // 0=days, 1=years only, 2=precise
+
+export interface Submission {
+  name: string;
+  year: number;
+  month: number | null;
+  day: number | null;
+  type: string;
+  plural: number;
+  link: string;
+  status: "pending" | "approved" | "rejected";
+  submittedAt: string;
+}

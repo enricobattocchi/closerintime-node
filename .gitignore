@@ -30,5 +30,11 @@ public/sw.js
 public/workbox-*.js
 public/swe-worker-*.js
 
-# SQLite
+# Netlify local state
+.netlify/
+
+# SQLite (legacy)
 data/*.db
+
+# Deno
+deno.lock
