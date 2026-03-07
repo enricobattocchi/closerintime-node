@@ -7,7 +7,7 @@ interface TimelinePartProps {
 
 export default function TimelinePart({ segment }: TimelinePartProps) {
   const hue = 115 + (360 * segment.order) / segment.total;
-  const color = `hsl(${hue}, 65%, 50%)`;
+  const color = `hsl(${hue}, 65%, var(--segment-lightness))`;
 
   return (
     <div

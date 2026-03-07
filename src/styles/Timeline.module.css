@@ -37,13 +37,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .markerInfo {
   margin-top: 5px;
   text-align: center;
   width: 10vw;
-  background: white;
+  background: var(--color-bg-surface);
   padding: 7px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
@@ -66,10 +68,6 @@
   line-height: 1.2;
 }
 
-.markerName::first-letter {
-  text-transform: uppercase;
-}
-
 .markerClickable {
   cursor: pointer;
 }
@@ -80,7 +78,7 @@ a.marker {
 }
 
 a.marker:hover .markerCircle {
-  box-shadow: 0 0 0 3px rgba(139, 34, 82, 0.4);
+  box-shadow: 0 0 0 3px var(--color-primary-shadow);
 }
 
 a.marker:hover .markerName {

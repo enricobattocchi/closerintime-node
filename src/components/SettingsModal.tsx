@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { TimespanFormat } from "@/lib/types";
 import styles from "@/styles/Settings.module.css";
 
@@ -16,6 +16,14 @@ export default function SettingsModal({
   onClose,
 }: SettingsModalProps) {
   const [format, setFormat] = useState<TimespanFormat>(timespanFormat);
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [onClose]);
 
   return (
     <div className={styles.overlay} onClick={onClose}>

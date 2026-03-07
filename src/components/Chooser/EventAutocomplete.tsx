@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import type { Event } from "@/lib/types";
 import { formatYear } from "@/lib/date-utils";
 import CategoryIcon from "@/components/CategoryIcon";
@@ -29,6 +29,10 @@ function matchesQuery(event: Event, query: string): boolean {
   return tokens.every((t) => searchable.includes(t));
 }
 
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function getRandomEvents(events: Event[], count: number): Event[] {
   const copy = [...events];
   const result: Event[] = [];
@@ -52,8 +56,11 @@ export default function EventAutocomplete({
 }: EventAutocompleteProps) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [randomEvents] = useState(() => getRandomEvents(events, 10));
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -65,6 +72,65 @@ export default function EventAutocomplete({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const available = events.filter((e) => !selectedIds.includes(e.id));
+  const filtered = query
+    ? available.filter((e) => matchesQuery(e, query)).slice(0, 10)
+    : randomEvents.filter((e) => !selectedIds.includes(e.id)).slice(0, 10);
+
+  // Reset highlight when query or filtered list changes
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [query]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!isOpen) {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          setIsOpen(true);
+          e.preventDefault();
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setHighlightedIndex((prev) =>
+            prev < filtered.length - 1 ? prev + 1 : 0
+          );
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setHighlightedIndex((prev) =>
+            prev > 0 ? prev - 1 : filtered.length - 1
+          );
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (highlightedIndex >= 0 && highlightedIndex < filtered.length) {
+            onSelect(filtered[highlightedIndex]);
+            setQuery("");
+            setIsOpen(false);
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          setIsOpen(false);
+          setHighlightedIndex(-1);
+          break;
+      }
+    },
+    [isOpen, filtered, highlightedIndex, onSelect]
+  );
+
+  // Scroll highlighted option into view
+  useEffect(() => {
+    if (highlightedIndex >= 0 && listRef.current) {
+      const el = listRef.current.children[highlightedIndex] as HTMLElement;
+      el?.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedIndex]);
+
   if (value) {
     return (
       <div className={styles.inputWrapper}>
@@ -74,7 +140,7 @@ export default function EventAutocomplete({
         <input
           className={styles.input}
           disabled
-          value={`${value.name} \u2013 ${formatYear(value.year)}`}
+          value={`${capitalize(value.name)} \u2013 ${formatYear(value.year)}`}
         />
         {value.link && (
           <a
@@ -105,10 +171,11 @@ export default function EventAutocomplete({
     );
   }
 
-  const available = events.filter((e) => !selectedIds.includes(e.id));
-  const filtered = query
-    ? available.filter((e) => matchesQuery(e, query)).slice(0, 10)
-    : randomEvents.filter((e) => !selectedIds.includes(e.id)).slice(0, 10);
+  const listboxId = "autocomplete-listbox";
+  const activeDescendant =
+    highlightedIndex >= 0 && filtered[highlightedIndex]
+      ? `option-${filtered[highlightedIndex].id}`
+      : undefined;
 
   return (
     <div className={styles.slot} ref={wrapperRef}>
@@ -117,6 +184,7 @@ export default function EventAutocomplete({
           <SearchIcon size={20} />
         </span>
         <input
+          ref={inputRef}
           className={styles.input}
           placeholder="Search for an event..."
           value={query}
@@ -125,6 +193,12 @@ export default function EventAutocomplete({
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
+          onKeyDown={handleKeyDown}
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-controls={listboxId}
+          aria-activedescendant={activeDescendant}
+          aria-autocomplete="list"
         />
         {onAdd && (
           <button
@@ -138,25 +212,29 @@ export default function EventAutocomplete({
         )}
       </div>
       {isOpen && (
-        <div className={styles.dropdown}>
+        <div className={styles.dropdown} role="listbox" id={listboxId} ref={listRef}>
           {filtered.length === 0 ? (
             <div className={styles.noResults}>No events found</div>
           ) : (
-            filtered.map((event) => (
+            filtered.map((event, index) => (
               <div
                 key={event.id}
-                className={styles.option}
+                id={`option-${event.id}`}
+                role="option"
+                aria-selected={index === highlightedIndex}
+                className={`${styles.option}${index === highlightedIndex ? ` ${styles.optionHighlighted}` : ""}`}
                 onMouseDown={(e) => {
                   e.preventDefault();
                   onSelect(event);
                   setQuery("");
                   setIsOpen(false);
                 }}
+                onMouseEnter={() => setHighlightedIndex(index)}
               >
                 <span className={styles.optionIcon}>
                   <CategoryIcon type={event.type} size={20} />
                 </span>
-                <span className={styles.optionName}>{event.name}</span>
+                <span className={styles.optionName}>{capitalize(event.name)}</span>
                 <span className={styles.optionYear}>
                   {formatYear(event.year)}
                 </span>

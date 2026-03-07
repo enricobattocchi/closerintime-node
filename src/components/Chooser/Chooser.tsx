@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import type { Event, MarkerData, SegmentData, TimespanFormat } from "@/lib/types";
+import type { Event, MarkerData, SegmentData } from "@/lib/types";
 import { useLocalEvents } from "@/hooks/useLocalEvents";
+import { useCachedEvents } from "@/hooks/useCachedEvents";
 import { useSettings } from "@/hooks/useSettings";
 import { computeTimeline } from "@/lib/timeline-math";
 import { generateSentence } from "@/lib/sentence";
@@ -37,6 +38,7 @@ export default function Chooser({
   serverHref,
 }: ChooserProps) {
   const router = useRouter();
+  const cachedEvents = useCachedEvents(allEvents);
   const { localEvents, addEvent, deleteEvent: deleteLocalEvent } = useLocalEvents();
   const { timespanFormat, updateTimespanFormat } = useSettings();
   const [selectedLocalEvents, setSelectedLocalEvents] = useState<Event[]>(urlCustomEvents);
@@ -46,8 +48,8 @@ export default function Chooser({
 
   // Merge server + local events for the search list
   const mergedEvents = useMemo(
-    () => [...allEvents, ...localEvents],
-    [allEvents, localEvents]
+    () => [...cachedEvents, ...localEvents],
+    [cachedEvents, localEvents]
   );
 
   // All currently selected events = server-selected + client-selected local events
@@ -133,6 +135,44 @@ export default function Chooser({
 
   const isLocalEvent = (event: Event | null) => event !== null && event.id < 0;
 
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  const handleExport = useCallback(async () => {
+    const container = exportRef.current;
+    if (!container) return;
+    const html2canvas = (await import("html2canvas")).default;
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    // Hide elements that shouldn't appear in the image
+    container.classList.add(styles.exporting);
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+    });
+    container.classList.remove(styles.exporting);
+    const link = document.createElement("a");
+    const names = allSelected
+      .map((e) => e.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, ""))
+      .join("-");
+    link.download = `closerintime-${names || "timeline"}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }, [allSelected]);
+
+  // Global "/" shortcut to focus first empty search input
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "/" && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault();
+        const input = document.querySelector<HTMLInputElement>(
+          `.${styles.chooser} input:not(:disabled)`
+        );
+        input?.focus();
+      }
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, []);
+
   return (
     <>
       <div className={styles.chooser}>
@@ -212,8 +252,16 @@ export default function Chooser({
           />
         )}
       </div>
-      {allSelected.length > 0 && <Sentence text={sentence} href={href} />}
-      <Timeline markers={timeline.markers} segments={timeline.segments} />
+      <div ref={exportRef} className={styles.exportArea}>
+        {allSelected.length > 0 && (
+          <Sentence
+            text={sentence}
+            href={href}
+            onExport={timeline.markers.length >= 2 ? handleExport : undefined}
+          />
+        )}
+        <Timeline markers={timeline.markers} segments={timeline.segments} />
+      </div>
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
       {showSettings && (
         <SettingsModal

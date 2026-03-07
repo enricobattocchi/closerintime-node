@@ -1,6 +1,7 @@
 .container {
   text-align: center;
   padding: 24px 16px 0;
+  position: relative;
 }
 
 .sentence {
@@ -12,4 +13,44 @@
 
 .sentence:hover {
   text-decoration: underline;
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-light);
+  padding: 4px 8px;
+  margin-left: 4px;
+  vertical-align: baseline;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  top: 0.15em;
+}
+
+.copyButton:hover {
+  color: var(--color-primary);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  animation: fadeInOut 2s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-8px); }
 }

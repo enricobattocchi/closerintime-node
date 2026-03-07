@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
   AccountBalance, MusicNote, Movie, Domain, MenuBook,
   ScienceIcon, PaletteIcon, MemoryIcon, SportsSoccer,
@@ -26,6 +27,14 @@ const categories = [
 ];
 
 export default function HelpModal({ onClose }: HelpModalProps) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
