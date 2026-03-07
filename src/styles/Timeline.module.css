@@ -2,6 +2,10 @@
   min-height: 200px;
 }
 
+.timelineEmpty {
+  justify-content: center;
+}
+
 .timeline {
   display: flex;
   align-items: flex-start;
@@ -117,6 +121,11 @@ a.marker:hover .markerName {
     margin-left: 20vw;
     min-height: 600px;
     padding: 0;
+  }
+
+  .timelineEmpty {
+    justify-content: center;
+    align-items: center;
   }
 
   .marker {
