@@ -57,8 +57,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
-    openGraph: { title: ogTitle, description },
-    twitter: { card: "summary", title: ogTitle, description },
+    openGraph: { title: ogTitle, description, images: [{ url: "/closerintime-sharing.png" }] },
+    twitter: { card: "summary_large_image", title: ogTitle, description, images: ["/closerintime-sharing.png"] },
   };
 }
 
