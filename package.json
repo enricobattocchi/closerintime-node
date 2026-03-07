@@ -17,10 +17,6 @@
   "license": "GPL-3.0-only",
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.9",
-    "@mui/material": "^7.3.9",
     "@netlify/blobs": "^10.7.0",
     "dexie": "^4.3.0",
     "next": "^16.1.6",

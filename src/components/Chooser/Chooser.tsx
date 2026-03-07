@@ -13,8 +13,7 @@ import AddEventForm from "./AddEventForm";
 import Timeline from "@/components/Timeline/Timeline";
 import Sentence from "@/components/Sentence";
 import SettingsModal from "@/components/SettingsModal";
-import HelpOutline from "@mui/icons-material/HelpOutline";
-import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
+import { HelpOutline, SettingsOutlined } from "@/components/Icon";
 import HelpModal from "@/components/HelpModal";
 import styles from "@/styles/Chooser.module.css";
 
@@ -145,7 +144,7 @@ export default function Chooser({
             aria-label="Help"
             title="Help"
           >
-            <HelpOutline sx={{ fontSize: 20 }} />
+            <HelpOutline size={20} />
           </button>
           <button
             className={styles.iconButton}
@@ -153,7 +152,7 @@ export default function Chooser({
             aria-label="Settings"
             title="Settings"
           >
-            <SettingsOutlined sx={{ fontSize: 20 }} />
+            <SettingsOutlined size={20} />
           </button>
         </div>
         {slots.map((event, i) => (

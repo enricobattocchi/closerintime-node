@@ -1,16 +1,10 @@
 "use client";
 
-import AccountBalance from "@mui/icons-material/AccountBalance";
-import MusicNote from "@mui/icons-material/MusicNote";
-import Movie from "@mui/icons-material/Movie";
-import Domain from "@mui/icons-material/Domain";
-import MenuBook from "@mui/icons-material/MenuBook";
-import Science from "@mui/icons-material/Science";
-import Palette from "@mui/icons-material/Palette";
-import Memory from "@mui/icons-material/Memory";
-import SportsSoccer from "@mui/icons-material/SportsSoccer";
-import LiveTv from "@mui/icons-material/LiveTv";
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import {
+  AccountBalance, MusicNote, Movie, Domain, MenuBook,
+  ScienceIcon, PaletteIcon, MemoryIcon, SportsSoccer,
+  LiveTv, AccountCircle,
+} from "@/components/Icon";
 import styles from "@/styles/HelpModal.module.css";
 
 interface HelpModalProps {
@@ -20,11 +14,11 @@ interface HelpModalProps {
 const categories = [
   { icon: AccountBalance, label: "history" },
   { icon: MusicNote, label: "music" },
-  { icon: Memory, label: "computer" },
-  { icon: Palette, label: "art" },
+  { icon: MemoryIcon, label: "computer" },
+  { icon: PaletteIcon, label: "art" },
   { icon: Movie, label: "film" },
   { icon: Domain, label: "building" },
-  { icon: Science, label: "science" },
+  { icon: ScienceIcon, label: "science" },
   { icon: MenuBook, label: "book" },
   { icon: SportsSoccer, label: "sport" },
   { icon: LiveTv, label: "pop culture" },
@@ -56,7 +50,7 @@ export default function HelpModal({ onClose }: HelpModalProps) {
           <ul className={styles.categories}>
             {categories.map(({ icon: Icon, label }) => (
               <li key={label} className={styles.category}>
-                <Icon fontSize="small" className={styles.categoryIcon} />
+                <Icon size={20} className={styles.categoryIcon} />
                 {label}
               </li>
             ))}

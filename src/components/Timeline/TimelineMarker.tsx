@@ -1,6 +1,6 @@
 import type { MarkerData } from "@/lib/types";
 import CategoryIcon from "@/components/CategoryIcon";
-import EventAvailable from "@mui/icons-material/EventAvailable";
+import { EventAvailable } from "@/components/Icon";
 import styles from "@/styles/Timeline.module.css";
 
 interface TimelineMarkerProps {
@@ -15,11 +15,12 @@ export default function TimelineMarker({ marker }: TimelineMarkerProps) {
   const circle = (
     <div className={`${styles.markerCircle} ${hasLink ? styles.markerClickable : ""}`}>
       {isNow ? (
-        <EventAvailable sx={{ fontSize: 28, color: "white" }} />
+        <EventAvailable size={28} style={{ color: "white" }} />
       ) : (
         <CategoryIcon
           type={event.type}
-          sx={{ fontSize: 28, color: "white" }}
+          size={28}
+          style={{ color: "white" }}
         />
       )}
     </div>

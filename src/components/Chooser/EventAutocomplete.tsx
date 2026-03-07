@@ -4,10 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import type { Event } from "@/lib/types";
 import { formatYear } from "@/lib/date-utils";
 import CategoryIcon from "@/components/CategoryIcon";
-import Search from "@mui/icons-material/Search";
-import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
-import Close from "@mui/icons-material/Close";
-import Delete from "@mui/icons-material/Delete";
+import { SearchIcon, AddCircleOutline, CloseIcon, DeleteIcon } from "@/components/Icon";
 import styles from "@/styles/Chooser.module.css";
 
 interface EventAutocompleteProps {
@@ -72,7 +69,7 @@ export default function EventAutocomplete({
     return (
       <div className={styles.inputWrapper}>
         <span className={styles.selectedIcon}>
-          <CategoryIcon type={value.type} sx={{ fontSize: 20 }} />
+          <CategoryIcon type={value.type} size={20} />
         </span>
         <input
           className={styles.input}
@@ -98,11 +95,11 @@ export default function EventAutocomplete({
             aria-label="Delete local event"
             title="Delete this local event"
           >
-            <Delete sx={{ fontSize: 18 }} />
+            <DeleteIcon size={18} />
           </button>
         )}
         <button className={styles.cancelButton} onClick={onClear} aria-label="Remove event">
-          <Close sx={{ fontSize: 18 }} />
+          <CloseIcon size={18} />
         </button>
       </div>
     );
@@ -117,7 +114,7 @@ export default function EventAutocomplete({
     <div className={styles.slot} ref={wrapperRef}>
       <div className={styles.inputWrapper}>
         <span className={styles.selectedIcon}>
-          <Search sx={{ fontSize: 20 }} />
+          <SearchIcon size={20} />
         </span>
         <input
           className={styles.input}
@@ -136,7 +133,7 @@ export default function EventAutocomplete({
             aria-label={showingAddForm ? "Cancel adding event" : "Add your own event"}
             title={showingAddForm ? "Cancel" : "Add your own event"}
           >
-            {showingAddForm ? <Close sx={{ fontSize: 20 }} /> : <AddCircleOutline sx={{ fontSize: 20 }} />}
+            {showingAddForm ? <CloseIcon size={20} /> : <AddCircleOutline size={20} />}
           </button>
         )}
       </div>
@@ -157,7 +154,7 @@ export default function EventAutocomplete({
                 }}
               >
                 <span className={styles.optionIcon}>
-                  <CategoryIcon type={event.type} sx={{ fontSize: 20 }} />
+                  <CategoryIcon type={event.type} size={20} />
                 </span>
                 <span className={styles.optionName}>{event.name}</span>
                 <span className={styles.optionYear}>

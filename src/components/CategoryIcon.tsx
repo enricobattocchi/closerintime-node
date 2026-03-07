@@ -1,27 +1,21 @@
-import AccountBalance from "@mui/icons-material/AccountBalance";
-import MusicNote from "@mui/icons-material/MusicNote";
-import Movie from "@mui/icons-material/Movie";
-import Domain from "@mui/icons-material/Domain";
-import MenuBook from "@mui/icons-material/MenuBook";
-import Science from "@mui/icons-material/Science";
-import Palette from "@mui/icons-material/Palette";
-import Memory from "@mui/icons-material/Memory";
-import SportsSoccer from "@mui/icons-material/SportsSoccer";
-import LiveTv from "@mui/icons-material/LiveTv";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import Event from "@mui/icons-material/Event";
-import type { SvgIconProps } from "@mui/material/SvgIcon";
-import type { ComponentType } from "react";
+import type { SVGProps } from "react";
+import {
+  AccountBalance, MusicNote, Movie, Domain, MenuBook,
+  ScienceIcon, PaletteIcon, MemoryIcon, SportsSoccer,
+  LiveTv, AccountCircle, EventIcon,
+} from "@/components/Icon";
 
-const iconMap: Record<string, ComponentType<SvgIconProps>> = {
+type IconComponent = (props: SVGProps<SVGSVGElement> & { size?: number }) => React.JSX.Element;
+
+const iconMap: Record<string, IconComponent> = {
   history: AccountBalance,
   music: MusicNote,
   film: Movie,
   building: Domain,
   book: MenuBook,
-  science: Science,
-  art: Palette,
-  computer: Memory,
+  science: ScienceIcon,
+  art: PaletteIcon,
+  computer: MemoryIcon,
   sport: SportsSoccer,
   "pop culture": LiveTv,
   personal: AccountCircle,
@@ -29,8 +23,9 @@ const iconMap: Record<string, ComponentType<SvgIconProps>> = {
 
 export default function CategoryIcon({
   type,
+  size,
   ...props
-}: { type: string } & SvgIconProps) {
-  const Icon = iconMap[type] || Event;
-  return <Icon {...props} />;
+}: { type: string; size?: number } & SVGProps<SVGSVGElement>) {
+  const Icon = iconMap[type] || EventIcon;
+  return <Icon size={size} {...props} />;
 }
