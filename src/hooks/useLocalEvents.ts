@@ -45,8 +45,9 @@ export function useLocalEvents() {
 
   const addEvent = useCallback(
     async (event: Omit<LocalEvent, "id">) => {
-      await getDb().localevents.add(event);
+      const dbId = await getDb().localevents.add(event);
       await refresh();
+      return dbId as number;
     },
     [refresh]
   );

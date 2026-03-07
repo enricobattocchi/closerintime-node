@@ -161,6 +161,7 @@ export default function Chooser({
               onDelete={
                 isLocalEvent(event)
                   ? () => {
+                      if (!confirm(`Delete "${event!.name}"?`)) return;
                       const dbId = -(event!.id);
                       deleteLocalEvent(dbId);
                       setSelectedLocalEvents((prev) =>
@@ -177,8 +178,23 @@ export default function Chooser({
         {showAddForm && (
           <AddEventForm
             onSave={async (event) => {
-              await addEvent(event);
+              const dbId = await addEvent(event);
               setShowAddForm(false);
+              // Auto-select the new event
+              setSelectedLocalEvents((prev) => [
+                ...prev,
+                {
+                  id: -dbId,
+                  name: event.name,
+                  year: event.year,
+                  month: event.month,
+                  day: event.day,
+                  type: event.type,
+                  enabled: 1,
+                  plural: event.plural,
+                  link: event.link,
+                },
+              ]);
             }}
             onCancel={() => setShowAddForm(false)}
           />
