@@ -76,4 +76,4 @@ scripts/
 
 ## License
 
-ISC
+GPL-3.0
