@@ -6,10 +6,6 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
 }
 
 .title {
@@ -17,20 +13,4 @@
   font-weight: bold;
   color: white;
   text-decoration: none;
-}
-
-.nav {
-  display: flex;
-  gap: 12px;
-}
-
-.navLink {
-  color: rgba(255, 255, 255, 0.85);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.navLink:hover {
-  color: white;
-  text-decoration: underline;
 }

@@ -17,6 +17,11 @@
   color: var(--color-text-light);
 }
 
+.browseLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
 .iconButton {
   background: none;
   border: none;
