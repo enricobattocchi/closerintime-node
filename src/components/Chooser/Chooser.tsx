@@ -144,10 +144,16 @@ export default function Chooser({
     const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     // Hide elements that shouldn't appear in the image
     container.classList.add(styles.exporting);
+    // Force 1200px width off-screen for consistent export size
+    const origStyles = container.style.cssText;
+    container.style.width = "1200px";
+    container.style.position = "absolute";
+    container.style.left = "-9999px";
     const canvas = await html2canvas(container, {
       scale: 2,
       backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
     });
+    container.style.cssText = origStyles;
     container.classList.remove(styles.exporting);
     const link = document.createElement("a");
     const names = allSelected
