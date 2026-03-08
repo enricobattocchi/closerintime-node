@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Source_Serif_4 } from "next/font/google";
 import "@/styles/globals.css";
 import Header from "@/components/Header";
-import OfflineIndicator from "@/components/OfflineIndicator";
 
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
@@ -59,7 +58,6 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">Skip to content</a>
         <Header />
         <main id="main-content">{children}</main>
-        <OfflineIndicator />
         <footer
           style={{
             textAlign: "center",

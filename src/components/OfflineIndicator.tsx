@@ -1,17 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { WifiOffIcon } from "./Icon";
 
 export default function OfflineIndicator() {
   const [offline, setOffline] = useState(false);
 
   useEffect(() => {
-    function goOffline() { setOffline(true); }
-    function goOnline() { setOffline(false); }
-
-    // Check initial state
     if (!navigator.onLine) setOffline(true);
-
+    const goOffline = () => setOffline(true);
+    const goOnline = () => setOffline(false);
     window.addEventListener("offline", goOffline);
     window.addEventListener("online", goOnline);
     return () => {
@@ -23,25 +21,21 @@ export default function OfflineIndicator() {
   if (!offline) return null;
 
   return (
-    <div
+    <span
       role="status"
-      aria-live="polite"
+      aria-label="You are offline"
+      title="No internet connection"
       style={{
-        position: "fixed",
-        bottom: 16,
-        left: "50%",
-        transform: "translateX(-50%)",
-        background: "var(--color-text)",
-        color: "var(--color-bg)",
-        padding: "8px 20px",
-        borderRadius: 8,
-        fontSize: "0.85rem",
-        fontWeight: 600,
-        zIndex: 1000,
-        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+        position: "absolute",
+        right: 16,
+        top: "50%",
+        transform: "translateY(-50%)",
+        display: "flex",
+        alignItems: "center",
+        color: "rgba(255, 255, 255, 0.8)",
       }}
     >
-      You're offline — using cached data
-    </div>
+      <WifiOffIcon size={20} />
+    </span>
   );
 }
