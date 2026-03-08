@@ -46,10 +46,12 @@ export default function Chooser({
   const { localEvents, addEvent, updateEvent: updateLocalEvent, deleteEvent: deleteLocalEvent } = useLocalEvents();
   const { timespanFormat, updateTimespanFormat, theme, updateTheme } = useSettings();
   const [selectedLocalEvents, setSelectedLocalEvents] = useState<Event[]>(urlCustomEvents);
+  const [offlineServerEvents, setOfflineServerEvents] = useState<Event[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
 
   // Merge server + local events for the search list
   const mergedEvents = useMemo(
@@ -57,10 +59,14 @@ export default function Chooser({
     [cachedEvents, localEvents]
   );
 
-  // All currently selected events = server-selected + client-selected local events
+  // All currently selected events = server-selected + offline-selected server + custom local
+  const allServerSelected = useMemo(
+    () => [...selectedEvents, ...offlineServerEvents],
+    [selectedEvents, offlineServerEvents]
+  );
   const allSelected = useMemo(
-    () => [...selectedEvents, ...selectedLocalEvents],
-    [selectedEvents, selectedLocalEvents]
+    () => [...allServerSelected, ...selectedLocalEvents],
+    [allServerSelected, selectedLocalEvents]
   );
 
   const currentIds = allSelected.map((e) => e.id);
@@ -82,18 +88,42 @@ export default function Chooser({
     []
   );
 
+  // Track online/offline status; sync when back online
+  useEffect(() => {
+    if (!navigator.onLine) setIsOffline(true);
+    const goOffline = () => setIsOffline(true);
+    const goOnline = () => {
+      setIsOffline(false);
+      if (offlineServerEvents.length > 0) {
+        const allServer = [...selectedEvents, ...offlineServerEvents];
+        setOfflineServerEvents([]);
+        navigate(allServer, selectedLocalEvents);
+      }
+    };
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
+  }, [offlineServerEvents, selectedEvents, selectedLocalEvents, navigate]);
+
   const handleSelect = useCallback(
     (slotIndex: number, event: Event) => {
       if (event.id < 0) {
         const nextCustom = [...selectedLocalEvents, event];
         setSelectedLocalEvents(nextCustom);
-        updateUrl(selectedEvents, nextCustom);
+        updateUrl(allServerSelected, nextCustom);
+      } else if (isOffline) {
+        const nextOffline = [...offlineServerEvents, event];
+        setOfflineServerEvents(nextOffline);
+        updateUrl([...selectedEvents, ...nextOffline], selectedLocalEvents);
       } else {
         const serverEvts = [...selectedEvents, event];
         navigate(serverEvts, selectedLocalEvents);
       }
     },
-    [selectedEvents, selectedLocalEvents, navigate, updateUrl]
+    [selectedEvents, selectedLocalEvents, offlineServerEvents, allServerSelected, isOffline, navigate, updateUrl]
   );
 
   const handleClear = useCallback(
@@ -104,10 +134,22 @@ export default function Chooser({
       if (event.id < 0) {
         const remainingCustom = selectedLocalEvents.filter((e) => e.id !== event.id);
         setSelectedLocalEvents(remainingCustom);
-        if (selectedEvents.length > 0 || remainingCustom.length > 0) {
-          updateUrl(selectedEvents, remainingCustom);
+        if (allServerSelected.length > 0 || remainingCustom.length > 0) {
+          updateUrl(allServerSelected, remainingCustom);
+        } else if (isOffline) {
+          updateUrl([], []);
         } else {
           router.push("/");
+        }
+      } else if (isOffline || offlineServerEvents.some((e) => e.id === event.id)) {
+        // Clearing an offline-selected server event
+        const remainingOffline = offlineServerEvents.filter((e) => e.id !== event.id);
+        setOfflineServerEvents(remainingOffline);
+        const allServer = [...selectedEvents, ...remainingOffline];
+        if (allServer.length > 0 || selectedLocalEvents.length > 0) {
+          updateUrl(allServer, selectedLocalEvents);
+        } else {
+          updateUrl([], []);
         }
       } else {
         const remainingServer = selectedEvents.filter((e) => e.id !== event.id);
@@ -118,12 +160,13 @@ export default function Chooser({
         }
       }
     },
-    [allSelected, selectedEvents, selectedLocalEvents, navigate, updateUrl, router]
+    [allSelected, selectedEvents, selectedLocalEvents, offlineServerEvents, allServerSelected, isOffline, navigate, updateUrl, router]
   );
 
-  // Recompute client-side when local events are selected OR settings differ from default
+  // Recompute client-side when local/offline events are selected OR settings differ from default
   const hasLocalSelection = selectedLocalEvents.length > 0;
-  const needsClientCompute = hasLocalSelection || timespanFormat !== 2;
+  const hasOfflineSelection = offlineServerEvents.length > 0;
+  const needsClientCompute = hasLocalSelection || hasOfflineSelection || timespanFormat !== 2;
 
   let timeline: { markers: MarkerData[]; segments: SegmentData[] };
   let sentence: string;
@@ -134,7 +177,7 @@ export default function Chooser({
     timeline = { markers: result.markers, segments: result.segments };
     sentence = generateSentence(allSelected, timespanFormat);
     // Shareable URL includes both server events and custom events
-    href = buildShareablePath(selectedEvents, selectedLocalEvents);
+    href = buildShareablePath(allServerSelected, selectedLocalEvents);
   } else {
     timeline = serverTimeline || { markers: [], segments: [] };
     sentence = serverSentence || "";
