@@ -15,6 +15,11 @@
   text-decoration: underline;
 }
 
+.iconGroup {
+  white-space: nowrap;
+  display: inline;
+}
+
 .copyButton {
   background: none;
   border: none;
