@@ -210,6 +210,19 @@ export default function EventAutocomplete({
           aria-activedescendant={activeDescendant}
           aria-autocomplete="list"
         />
+        {query && (
+          <button
+            className={styles.clearButton}
+            onClick={() => {
+              setQuery("");
+              inputRef.current?.focus();
+            }}
+            aria-label="Clear search"
+            title="Clear search"
+          >
+            <CloseIcon size={16} />
+          </button>
+        )}
         {onAdd && (
           <button
             className={styles.addIconButton}

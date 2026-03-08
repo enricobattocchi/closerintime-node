@@ -75,6 +75,20 @@
   color: var(--color-primary);
 }
 
+.clearButton {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-light);
+  padding: 2px;
+}
+
+.clearButton:hover {
+  color: var(--color-text);
+}
+
 .cancelButton {
   display: flex;
   align-items: center;
