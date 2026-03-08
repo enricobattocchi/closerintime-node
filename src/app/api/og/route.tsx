@@ -1,7 +1,9 @@
 import { ImageResponse } from "next/og";
 import { type NextRequest } from "next/server";
+import type { Event } from "@/lib/types";
 import { getEventsByIds } from "@/lib/events";
 import { generateSentence } from "@/lib/sentence";
+import { computeTimeline } from "@/lib/timeline-math";
 import { parseSegments } from "@/lib/url-params";
 
 export const revalidate = 3600;
@@ -21,11 +23,21 @@ async function getFont(): Promise<ArrayBuffer> {
   return fontCache;
 }
 
+function segmentColor(order: number, total: number): string {
+  const hue = 115 + (360 * order) / total;
+  return `hsl(${hue}, 65%, 55%)`;
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const ids = searchParams.get("ids");
 
   let sentence = "";
+  let allEvents: Event[] = [];
   if (ids) {
     const rawIds = ids.split(",");
     const parsed = parseSegments(rawIds);
@@ -34,7 +46,7 @@ export async function GET(request: NextRequest) {
         parsed.serverIds.length > 0
           ? await getEventsByIds(parsed.serverIds)
           : [];
-      const allEvents = [...serverEvents, ...parsed.customEvents];
+      allEvents = [...serverEvents, ...parsed.customEvents];
       if (allEvents.length > 0) {
         sentence = generateSentence(allEvents);
       }
@@ -42,6 +54,9 @@ export async function GET(request: NextRequest) {
   }
 
   const font = await getFont();
+
+  // Compute timeline data for the mini visualization
+  const timeline = allEvents.length > 0 ? computeTimeline(allEvents) : null;
 
   return new ImageResponse(
     (
@@ -71,6 +86,96 @@ export async function GET(request: NextRequest) {
             {sentence}
           </div>
         ) : null}
+        {timeline && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              maxWidth: "1040px",
+              marginTop: "50px",
+            }}
+          >
+            {/* Span labels above the bar */}
+            <div style={{ display: "flex", alignItems: "center", width: "100%", marginBottom: "8px" }}>
+              {timeline.segments.map((seg) => (
+                <div
+                  key={seg.order}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    flexGrow: Math.max(seg.percentage, 1),
+                    flexBasis: 0,
+                    color: segmentColor(seg.order, seg.total),
+                    fontSize: 18,
+                    fontFamily: "Source Serif 4",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {seg.spanLabel}
+                </div>
+              ))}
+            </div>
+            {/* Bar with segments */}
+            <div style={{ display: "flex", alignItems: "center", width: "100%", height: "24px" }}>
+              {timeline.markers.map((marker, i) => {
+                const seg = i < timeline.segments.length ? timeline.segments[i] : null;
+                return (
+                  <div key={marker.event.id} style={{ display: "flex", alignItems: "center", flexGrow: seg ? Math.max(seg.percentage, 1) : 0, flexBasis: seg ? 0 : "auto", flexShrink: 0 }}>
+                    {/* Marker dot */}
+                    <div
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        borderRadius: "50%",
+                        background: "white",
+                        flexShrink: 0,
+                      }}
+                    />
+                    {/* Segment line (except after last marker) */}
+                    {seg && (
+                      <div
+                        style={{
+                          flexGrow: 1,
+                          height: "8px",
+                          background: segmentColor(seg.order, seg.total),
+                          borderRadius: "4px",
+                          minWidth: "8px",
+                        }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {/* Marker labels below the bar */}
+            <div style={{ display: "flex", alignItems: "flex-start", width: "100%", marginTop: "8px" }}>
+              {timeline.markers.map((marker, i) => {
+                const isNow = marker.event.id === 0;
+                const seg = i < timeline.segments.length ? timeline.segments[i] : null;
+                return (
+                  <div key={marker.event.id} style={{ display: "flex", alignItems: "flex-start", flexGrow: seg ? Math.max(seg.percentage, 1) : 0, flexBasis: seg ? 0 : "auto", flexShrink: 0 }}>
+                    <div
+                      style={{
+                        color: "rgba(255, 255, 255, 0.9)",
+                        fontSize: 16,
+                        fontFamily: "Source Serif 4",
+                        whiteSpace: "nowrap",
+                        width: "24px",
+                        textAlign: "center",
+                        overflow: "visible",
+                      }}
+                    >
+                      {isNow ? "Now" : capitalize(marker.event.name).length > 25
+                        ? capitalize(marker.event.name).slice(0, 23) + "…"
+                        : capitalize(marker.event.name)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <div
           style={{
             color: "rgba(255, 255, 255, 0.7)",
