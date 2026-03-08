@@ -231,7 +231,7 @@ export default function EventAutocomplete({
       </div>
       {isOpen && (
         <div className={styles.dropdown}>
-          <CategoryFilter selected={categoryFilter} onSelect={setCategoryFilter} />
+          <CategoryFilter selected={categoryFilter} onSelect={setCategoryFilter} events={available} />
           <div role="listbox" id={listboxId} ref={listRef}>
             {filtered.length === 0 ? (
               <div className={styles.noResults}>No events found</div>
