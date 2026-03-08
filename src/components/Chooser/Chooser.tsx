@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Event, MarkerData, SegmentData } from "@/lib/types";
 import { useLocalEvents } from "@/hooks/useLocalEvents";
@@ -213,7 +214,7 @@ export default function Chooser({
     <>
       <div className={styles.chooser}>
         <div className={styles.headingRow}>
-          <p className={styles.heading}>Pick some events or <a href="/browse" className={styles.browseLink}>browse</a></p>
+          <p className={styles.heading}>Pick some events or <Link href="/browse" className={styles.browseLink}>browse</Link></p>
           <button
             className={styles.iconButton}
             onClick={() => setShowHelp(true)}

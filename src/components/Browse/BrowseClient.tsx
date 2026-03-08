@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import type { Event } from "@/lib/types";
 import { EVENT_TYPES } from "@/lib/types";
 import { formatYear } from "@/lib/date-utils";
@@ -150,7 +151,7 @@ export default function BrowseClient({ eras: serverEras }: BrowseClientProps) {
         })}
       </div>
       <div className={styles.backLink}>
-        <a href="/">&#8592; Back to timeline</a>
+        <Link href="/">&#8592; Back to timeline</Link>
       </div>
     </div>
   );
