@@ -11,7 +11,13 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function BrowsePage() {
-  const events = await getEnabledEvents();
+  let events: Awaited<ReturnType<typeof getEnabledEvents>>;
+  try {
+    events = await getEnabledEvents();
+  } catch {
+    // Offline or fetch failed — client component will fall back to IndexedDB cache
+    events = [];
+  }
   const groups = groupByEra(events);
 
   // Serialize for client component

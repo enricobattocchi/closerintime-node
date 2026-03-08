@@ -1,3 +1,4 @@
+import OfflineIndicator from "./OfflineIndicator";
 import styles from "@/styles/Header.module.css";
 
 export default function Header() {
@@ -6,6 +7,7 @@ export default function Header() {
       <a href="/" className={styles.title}>
         #closerintime
       </a>
+      <OfflineIndicator />
     </header>
   );
 }
