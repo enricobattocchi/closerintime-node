@@ -30,8 +30,14 @@ async function main() {
   const eventsStore = getStore({ name: "events", siteID, token });
   const events = await eventsStore.get("all", { type: "json" });
   const eventsFile = join(dir, `events-${timestamp}.json`);
-  writeFileSync(eventsFile, JSON.stringify(events, null, 2));
+  const eventsJson = JSON.stringify(events, null, 2);
+  writeFileSync(eventsFile, eventsJson);
   console.log(`Events: ${Array.isArray(events) ? events.length : 0} → ${eventsFile}`);
+
+  // Also update the reference copy so seed:blobs stays in sync
+  const referenceFile = join(__dirname, "..", "data", "events.json");
+  writeFileSync(referenceFile, eventsJson);
+  console.log(`Updated data/events.json`);
 
   // Backup submissions
   const subStore = getStore({ name: "submissions", siteID, token });
