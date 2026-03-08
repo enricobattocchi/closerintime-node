@@ -159,6 +159,7 @@ export default function EventAutocomplete({
           className={styles.input}
           disabled
           value={`${capitalize(value.name)} \u2013 ${formatYear(value.year)}`}
+          aria-label={`Selected event: ${capitalize(value.name)}`}
         />
         {value.link && (
           <a

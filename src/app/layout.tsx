@@ -67,11 +67,11 @@ export default function RootLayout({
           }}
         >
           A progressive web app from{" "}
-          <a href="https://lopo.it" rel="author noopener" target="_blank" style={{ color: "var(--color-primary)" }}>
+          <a href="https://lopo.it" rel="author noopener" target="_blank" style={{ color: "var(--color-primary)", textDecoration: "underline" }}>
             Lopo.it
           </a>
           {" "}&middot;{" "}
-          <a href="https://github.com/enricobattocchi/closerintime-node" rel="noopener" target="_blank" style={{ color: "var(--color-primary)" }}>
+          <a href="https://github.com/enricobattocchi/closerintime-node" rel="noopener" target="_blank" style={{ color: "var(--color-primary)", textDecoration: "underline" }}>
             GitHub
           </a>
         </footer>
