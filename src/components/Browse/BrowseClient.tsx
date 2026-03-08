@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Event } from "@/lib/types";
 import { EVENT_TYPES } from "@/lib/types";
 import { formatYear } from "@/lib/date-utils";
+import { ERAS, groupByEra } from "@/lib/eras";
+import { getCacheDb } from "@/lib/cache-db";
 import CategoryIcon from "@/components/CategoryIcon";
 import styles from "@/styles/Browse.module.css";
 
@@ -22,7 +24,33 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export default function BrowseClient({ eras }: BrowseClientProps) {
+function buildErasFromEvents(events: Event[]): EraData[] {
+  const groups = groupByEra(events);
+  return ERAS.map((era) => ({
+    id: era.id,
+    label: era.label,
+    description: era.description,
+    events: groups.get(era.id) || [],
+  }));
+}
+
+export default function BrowseClient({ eras: serverEras }: BrowseClientProps) {
+  const [eras, setEras] = useState(serverEras);
+
+  // Fall back to cached events when server returned nothing (offline)
+  useEffect(() => {
+    const hasEvents = serverEras.some((e) => e.events.length > 0);
+    if (!hasEvents) {
+      getCacheDb()
+        .then((db) => db.cachedEvents.toArray())
+        .then((cached) => {
+          if (cached.length > 0) {
+            setEras(buildErasFromEvents(cached));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [serverEras]);
   const [openEras, setOpenEras] = useState<Set<string>>(() => new Set());
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
