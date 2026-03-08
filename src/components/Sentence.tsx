@@ -27,26 +27,28 @@ export default function Sentence({ text, href, onExport }: SentenceProps) {
       <a href={href} className={styles.sentence}>
         {text}
       </a>
-      <button
-        className={styles.copyButton}
-        onClick={handleCopy}
-        aria-label="Copy link"
-        title="Copy link"
-        data-hide-on-export
-      >
-        <ContentCopy size={18} />
-      </button>
-      {onExport && (
+      <span className={styles.iconGroup}>
         <button
           className={styles.copyButton}
-          onClick={onExport}
-          aria-label="Download as image"
-          title="Download as image"
+          onClick={handleCopy}
+          aria-label="Copy link"
+          title="Copy link"
           data-hide-on-export
         >
-          <DownloadIcon size={18} />
+          <ContentCopy size={18} />
         </button>
-      )}
+        {onExport && (
+          <button
+            className={styles.copyButton}
+            onClick={onExport}
+            aria-label="Download as image"
+            title="Download as image"
+            data-hide-on-export
+          >
+            <DownloadIcon size={18} />
+          </button>
+        )}
+      </span>
       {showToast && <div className={styles.toast}>Link copied!</div>}
     </div>
   );
