@@ -167,8 +167,8 @@ export default function EventAutocomplete({
             target="_blank"
             rel="noopener noreferrer"
             className={styles.linkButton}
-            aria-label="Wikipedia article"
-            title="Wikipedia article"
+            aria-label={`Wikipedia article about ${capitalize(value.name)}`}
+            title={`Wikipedia: ${capitalize(value.name)}`}
           >
             <img src="/icons/wikipedia-w.svg" alt="Wikipedia" width={18} height={18} />
           </a>
