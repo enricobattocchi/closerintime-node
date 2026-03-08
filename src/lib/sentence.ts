@@ -36,6 +36,15 @@ export function generateSentence(
 
   if (sorted.length === 1) {
     const d = eventToDate(sorted[0], yearsOnly);
+    // If the event has a precise day and today is its exact anniversary, use "X years ago today:"
+    if (
+      !yearsOnly &&
+      d.getUTCMonth() === now.getUTCMonth() &&
+      d.getUTCDate() === now.getUTCDate()
+    ) {
+      const years = diffYears(d, now);
+      return `${years} ${years === 1 ? "year" : "years"} ago today: ${sorted[0].name}`;
+    }
     const span = yearsOnly
       ? formatSpan(d, now, true, 1)
       : preciseDiff(d, now);
