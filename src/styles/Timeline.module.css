@@ -179,12 +179,10 @@ a.marker:focus-visible {
   }
 
   .timelineEmpty {
-    flex: 1;
     justify-content: center;
     align-items: center;
-    min-height: unset;
-    margin-top: 0;
-    margin-left: 0;
+    min-height: calc(100dvh - 320px);
+    margin: 0;
   }
 
   .timelineEmpty .marker {
