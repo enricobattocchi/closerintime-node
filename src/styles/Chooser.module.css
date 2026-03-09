@@ -20,6 +20,11 @@
 .browseLink {
   color: var(--color-primary);
   text-decoration: underline;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
 }
 
 .iconButton {

@@ -134,6 +134,14 @@
   text-decoration: none;
   color: var(--color-text);
   transition: background 0.1s;
+  /* Support both <a> and <button> usage */
+  width: 100%;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
 .eventItem:hover {
