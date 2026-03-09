@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Event, MarkerData, SegmentData } from "@/lib/types";
 import { useLocalEvents } from "@/hooks/useLocalEvents";
@@ -22,6 +21,7 @@ import styles from "@/styles/Chooser.module.css";
 
 const HelpModal = dynamic(() => import("@/components/HelpModal"));
 const SettingsModal = dynamic(() => import("@/components/SettingsModal"));
+const BrowseModal = dynamic(() => import("@/components/BrowseModal"));
 
 interface ChooserProps {
   allEvents: Event[];
@@ -52,6 +52,7 @@ export default function Chooser({
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showBrowse, setShowBrowse] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
 
   // Merge server + local events for the search list
@@ -229,7 +230,7 @@ export default function Chooser({
     <>
       <div className={styles.chooser}>
         <div className={styles.headingRow}>
-          <p className={styles.heading}>Pick some events or <Link href="/browse" className={styles.browseLink}>browse</Link></p>
+          <p className={styles.heading}>Pick some events or <button className={styles.browseLink} onClick={() => setShowBrowse(true)}>browse</button></p>
           <button
             className={styles.iconButton}
             onClick={() => setShowHelp(true)}
@@ -364,6 +365,18 @@ export default function Chooser({
         )}
         <Timeline markers={timeline.markers} segments={timeline.segments} />
       </div>
+      {showBrowse && (
+        <BrowseModal
+          events={mergedEvents}
+          selectedIds={currentIds}
+          onSelect={(event) => {
+            if (allSelected.length < 3) {
+              handleSelect(allSelected.length, event);
+            }
+          }}
+          onClose={() => setShowBrowse(false)}
+        />
+      )}
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
       {showSettings && (
         <SettingsModal

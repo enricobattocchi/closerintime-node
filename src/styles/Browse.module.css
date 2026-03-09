@@ -88,6 +88,11 @@
   background: var(--color-bg-hover);
 }
 
+.eraHeader:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
 .eraInfo {
   flex: 1;
   display: flex;
@@ -134,10 +139,23 @@
   text-decoration: none;
   color: var(--color-text);
   transition: background 0.1s;
+  /* Support both <a> and <button> usage */
+  width: 100%;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
 .eventItem:hover {
   background: var(--color-bg-hover);
+}
+
+.eventItem:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
 }
 
 .eventIcon {
