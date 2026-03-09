@@ -40,9 +40,9 @@ describe("SettingsModal", () => {
     expect(props.onClose).toHaveBeenCalled();
   });
 
-  it("cancel calls onClose", () => {
+  it("close button calls onClose", () => {
     const props = renderModal();
-    fireEvent.click(screen.getByText("Cancel"));
+    fireEvent.click(screen.getByLabelText("Close"));
     expect(props.onClose).toHaveBeenCalled();
   });
 
