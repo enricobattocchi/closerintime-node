@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Source_Serif_4 } from "next/font/google";
 import "@/styles/globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
@@ -58,23 +59,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">Skip to content</a>
         <Header />
         <main id="main-content">{children}</main>
-        <footer
-          style={{
-            textAlign: "center",
-            padding: "32px 16px 24px",
-            fontSize: "0.8rem",
-            color: "var(--color-text-light)",
-          }}
-        >
-          A progressive web app from{" "}
-          <a href="https://lopo.it" rel="author noopener" target="_blank" style={{ color: "var(--color-primary)", textDecoration: "underline" }}>
-            Lopo.it
-          </a>
-          {" "}&middot;{" "}
-          <a href="https://github.com/enricobattocchi/closerintime-node" rel="noopener" target="_blank" style={{ color: "var(--color-primary)", textDecoration: "underline" }}>
-            GitHub
-          </a>
-        </footer>
+        <Footer />
       </body>
     </html>
   );
