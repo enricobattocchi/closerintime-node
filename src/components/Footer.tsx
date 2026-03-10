@@ -44,6 +44,11 @@ export default function Footer() {
           <a href="https://github.com/enricobattocchi/closerintime-node" rel="noopener" target="_blank">
             GitHub
           </a>
+          <br />
+          Check also{" "}
+          <a href="https://wiki.closerinti.me/" rel="noopener" target="_blank">
+            wiki.closerintime
+          </a>
         </p>
       </footer>
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
