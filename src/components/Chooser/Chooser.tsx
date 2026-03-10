@@ -350,6 +350,9 @@ export default function Chooser({
           />
         )}
         <Timeline markers={timeline.markers} segments={timeline.segments} />
+        <div className={styles.watermark} data-show-on-export>
+          #closerintime
+        </div>
       </div>
       {showHighlights && (
         <HighlightsModal onClose={() => setShowHighlights(false)} />

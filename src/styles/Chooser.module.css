@@ -229,3 +229,18 @@
 .exportArea[data-exporting] [data-hide-on-export] {
   display: none !important;
 }
+
+/* Show export-only elements during image export */
+.exportArea [data-show-on-export] {
+  display: none !important;
+}
+
+.exportArea[data-exporting] [data-show-on-export] {
+  display: block !important;
+}
+
+.watermark {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
