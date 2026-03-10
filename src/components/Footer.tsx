@@ -45,6 +45,7 @@ export default function Footer() {
             GitHub
           </a>
           {" "}&middot;{" "}
+          Check also{" "}
           <a href="https://wiki.closerinti.me/" rel="noopener" target="_blank">
             wiki.closerintime
           </a>
