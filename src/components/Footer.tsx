@@ -46,7 +46,7 @@ export default function Footer() {
           </a>
           {" "}&middot;{" "}
           <a href="https://wiki.closerinti.me/" rel="noopener" target="_blank">
-            check also wiki.closerintime
+            wiki.closerintime
           </a>
         </p>
       </footer>
