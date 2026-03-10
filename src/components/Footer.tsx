@@ -40,11 +40,11 @@ export default function Footer() {
           <a href="https://lopo.it" rel="author noopener" target="_blank">
             Lopo.it
           </a>
-          <br />
+          {" "}&middot;{" "}
           <a href="https://github.com/enricobattocchi/closerintime-node" rel="noopener" target="_blank">
             GitHub
           </a>
-          {" · "}
+          <br />
           Check also{" "}
           <a href="https://wiki.closerinti.me/" rel="noopener" target="_blank">
             wiki.closerintime
