@@ -17,7 +17,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { ids: rawIds } = await params;
   const parsed = parseSegments(rawIds);
-  if (!parsed) return { title: "closerintime" };
+  if (!parsed) return { title: "#closerintime" };
 
   let serverEvents: Event[] = [];
   try {
@@ -28,10 +28,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // Offline — metadata will use defaults
   }
   const allEvents = [...serverEvents, ...parsed.customEvents];
-  if (allEvents.length === 0) return { title: "closerintime" };
+  if (allEvents.length === 0) return { title: "#closerintime" };
 
   const sentence = generateSentence(allEvents);
-  const title = sentence || "closerintime";
+  const title = sentence || "#closerintime";
   const ogTitle = sentence ? `${sentence} #closerintime` : "#closerintime";
   const description = "Visualize the time between historical events.";
   const ogImage = `/api/og?ids=${rawIds.join(",")}`;

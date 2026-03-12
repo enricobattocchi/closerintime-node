@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "#closerintime",
     description: "Visualize the time between historical events.",
-    siteName: "closerintime",
+    siteName: "#closerintime",
     images: [{ url: "/closerintime-sharing.png", width: 1200, height: 630 }],
   },
   twitter: {

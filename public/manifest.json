@@ -1,6 +1,6 @@
 {
-  "name": "closerintime",
-  "short_name": "closerintime",
+  "name": "#closerintime",
+  "short_name": "#closerintime",
   "description": "Visualize the time between historical events.",
   "start_url": "/",
   "display": "standalone",

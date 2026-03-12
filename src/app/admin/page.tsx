@@ -1,7 +1,7 @@
 import AdminShell from "@/components/Admin/AdminShell";
 
 export const metadata = {
-  title: "Admin - closerintime",
+  title: "Admin - #closerintime",
   robots: { index: false, follow: false },
 };
 
