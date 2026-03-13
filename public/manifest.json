@@ -32,5 +32,21 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1280x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Timeline view on desktop"
+    },
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Timeline view on mobile"
+    }
   ]
 }
