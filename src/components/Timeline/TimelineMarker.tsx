@@ -1,6 +1,7 @@
 import type { MarkerData } from "@/lib/types";
 import CategoryIcon from "@/components/CategoryIcon";
 import { EventAvailable } from "@/components/Icon";
+import { capitalize } from "@/lib/string-utils";
 import styles from "@/styles/Timeline.module.css";
 
 interface TimelineMarkerProps {
@@ -29,7 +30,7 @@ export default function TimelineMarker({ marker }: TimelineMarkerProps) {
   const info = (
     <div className={`${styles.markerInfo} ${hasLink ? styles.markerClickable : ""}`}>
       <span className={styles.markerDate}>{label}</span>
-      <span className={styles.markerName}>{event.name.charAt(0).toUpperCase() + event.name.slice(1)}</span>
+      <span className={styles.markerName}>{capitalize(event.name)}</span>
     </div>
   );
 

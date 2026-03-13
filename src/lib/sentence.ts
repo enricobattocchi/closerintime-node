@@ -5,18 +5,9 @@ import {
   diffDays,
   preciseDiff,
   formatSpan,
+  eventToDate,
 } from "./date-utils";
-
-function ucfirst(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function eventToDate(event: Event, yearsOnly: boolean): Date {
-  if (yearsOnly || !event.month || !event.day) {
-    return createUTCDate(event.year);
-  }
-  return createUTCDate(event.year, event.month - 1, event.day);
-}
+import { capitalize as ucfirst } from "./string-utils";
 
 export function generateSentence(
   events: Event[],

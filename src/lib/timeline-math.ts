@@ -9,14 +9,8 @@ import {
   formatYear,
   formatSpan,
   currentYear,
+  eventToDate,
 } from "./date-utils";
-
-function eventToDate(event: Event, yearsOnly: boolean): Date {
-  if (yearsOnly || !event.month || !event.day) {
-    return createUTCDate(event.year);
-  }
-  return createUTCDate(event.year, event.month - 1, event.day);
-}
 
 export function computeTimeline(
   events: Event[],

@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chat_id: chatId, text }),
-    }).catch(() => {});
+    }).catch((err) => console.warn("Failed to send Telegram notification:", err));
   }
 
   return NextResponse.json({ message: "Submission received" }, { status: 201 });

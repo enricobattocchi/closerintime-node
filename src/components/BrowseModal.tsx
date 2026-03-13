@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { Event } from "@/lib/types";
 import { EVENT_TYPES } from "@/lib/types";
 import { formatYear } from "@/lib/date-utils";
-import { ERAS, groupByEra } from "@/lib/eras";
+import { capitalize } from "@/lib/string-utils";
+import { useBrowseData } from "@/hooks/useBrowseData";
 import CategoryIcon from "@/components/CategoryIcon";
 import browseStyles from "@/styles/Browse.module.css";
 import modalStyles from "@/styles/BrowseModal.module.css";
@@ -16,51 +17,17 @@ interface BrowseModalProps {
   onClose: () => void;
 }
 
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
 export default function BrowseModal({ events, selectedIds, onSelect, onClose }: BrowseModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
-  const [openEras, setOpenEras] = useState<Set<string>>(() => new Set());
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-
-  const eras = useMemo(() => {
-    const groups = groupByEra(events);
-    return ERAS.map((era) => ({
-      id: era.id,
-      label: era.label,
-      description: era.description,
-      events: groups.get(era.id) || [],
-    }));
-  }, [events]);
-
-  const categoryCounts = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const e of events) {
-      map.set(e.type, (map.get(e.type) || 0) + 1);
-    }
-    return map;
-  }, [events]);
-
-  const filteredEras = useMemo(() => {
-    if (!categoryFilter) return eras;
-    return eras.map((era) => ({
-      ...era,
-      events: era.events.filter((e) => e.type === categoryFilter),
-    }));
-  }, [eras, categoryFilter]);
-
-  const totalFiltered = filteredEras.reduce((sum, e) => sum + e.events.length, 0);
-
-  const toggle = (id: string) => {
-    setOpenEras((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  const {
+    openEras,
+    categoryFilter,
+    categoryCounts,
+    filteredEras,
+    totalFiltered,
+    toggleEra,
+    toggleCategory,
+  } = useBrowseData(events);
 
   // Focus trap + Escape
   useEffect(() => {
@@ -119,7 +86,7 @@ export default function BrowseModal({ events, selectedIds, onSelect, onClose }: 
             <button
               key={type}
               className={`${browseStyles.chip}${categoryFilter === type ? ` ${browseStyles.chipActive}` : ""}`}
-              onClick={() => setCategoryFilter(categoryFilter === type ? null : type)}
+              onClick={() => toggleCategory(type)}
               aria-pressed={categoryFilter === type}
               title={capitalize(type)}
             >
@@ -136,7 +103,7 @@ export default function BrowseModal({ events, selectedIds, onSelect, onClose }: 
               <div key={era.id} className={browseStyles.era}>
                 <button
                   className={browseStyles.eraHeader}
-                  onClick={() => toggle(era.id)}
+                  onClick={() => toggleEra(era.id)}
                   aria-expanded={isOpen}
                   aria-controls={`browse-era-${era.id}`}
                 >

@@ -6,39 +6,20 @@ import Link from "next/link";
 import type { Event } from "@/lib/types";
 import { EVENT_TYPES } from "@/lib/types";
 import { formatYear } from "@/lib/date-utils";
-import { ERAS, groupByEra } from "@/lib/eras";
+import { capitalize } from "@/lib/string-utils";
 import { getCacheDb } from "@/lib/cache-db";
+import { useBrowseData, buildErasFromEvents } from "@/hooks/useBrowseData";
+import type { EraData } from "@/hooks/useBrowseData";
 import CategoryIcon from "@/components/CategoryIcon";
 import styles from "@/styles/Browse.module.css";
-
-interface EraData {
-  id: string;
-  label: string;
-  description: string;
-  events: Event[];
-}
 
 interface BrowseClientProps {
   eras: EraData[];
 }
 
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function buildErasFromEvents(events: Event[]): EraData[] {
-  const groups = groupByEra(events);
-  return ERAS.map((era) => ({
-    id: era.id,
-    label: era.label,
-    description: era.description,
-    events: groups.get(era.id) || [],
-  }));
-}
-
 export default function BrowseClient({ eras: serverEras }: BrowseClientProps) {
   const router = useRouter();
-  const [eras, setEras] = useState(serverEras);
+  const [allEvents, setAllEvents] = useState(() => serverEras.flatMap((e) => e.events));
   const [isOffline, setIsOffline] = useState(false);
 
   // Track offline state
@@ -62,10 +43,12 @@ export default function BrowseClient({ eras: serverEras }: BrowseClientProps) {
         .then((db) => db.cachedEvents.toArray())
         .then((cached) => {
           if (cached.length > 0) {
-            setEras(buildErasFromEvents(cached));
+            setAllEvents(cached);
           }
         })
-        .catch(() => {});
+        .catch((err) => console.warn("Failed to load cached events for browse:", err));
+    } else {
+      setAllEvents(serverEras.flatMap((e) => e.events));
     }
   }, [serverEras]);
 
@@ -80,37 +63,15 @@ export default function BrowseClient({ eras: serverEras }: BrowseClientProps) {
     [isOffline]
   );
 
-  const [openEras, setOpenEras] = useState<Set<string>>(() => new Set());
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-
-  const allEvents = useMemo(() => eras.flatMap((e) => e.events), [eras]);
-
-  const categoryCounts = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const e of allEvents) {
-      map.set(e.type, (map.get(e.type) || 0) + 1);
-    }
-    return map;
-  }, [allEvents]);
-
-  const filteredEras = useMemo(() => {
-    if (!categoryFilter) return eras;
-    return eras.map((era) => ({
-      ...era,
-      events: era.events.filter((e) => e.type === categoryFilter),
-    }));
-  }, [eras, categoryFilter]);
-
-  const totalFiltered = filteredEras.reduce((sum, e) => sum + e.events.length, 0);
-
-  const toggle = (id: string) => {
-    setOpenEras((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  const {
+    openEras,
+    categoryFilter,
+    categoryCounts,
+    filteredEras,
+    totalFiltered,
+    toggleEra,
+    toggleCategory,
+  } = useBrowseData(allEvents);
 
   return (
     <div className={styles.container}>
@@ -126,7 +87,7 @@ export default function BrowseClient({ eras: serverEras }: BrowseClientProps) {
           <button
             key={type}
             className={`${styles.chip}${categoryFilter === type ? ` ${styles.chipActive}` : ""}`}
-            onClick={() => setCategoryFilter(categoryFilter === type ? null : type)}
+            onClick={() => toggleCategory(type)}
             aria-pressed={categoryFilter === type}
             title={capitalize(type)}
           >
@@ -143,7 +104,7 @@ export default function BrowseClient({ eras: serverEras }: BrowseClientProps) {
             <div key={era.id} className={styles.era}>
               <button
                 className={styles.eraHeader}
-                onClick={() => toggle(era.id)}
+                onClick={() => toggleEra(era.id)}
                 aria-expanded={isOpen}
                 aria-controls={`era-${era.id}`}
               >

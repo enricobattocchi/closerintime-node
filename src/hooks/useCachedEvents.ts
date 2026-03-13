@@ -12,7 +12,7 @@ export function useCachedEvents(serverEvents: Event[]): Event[] {
       // Cache the server events (non-blocking)
       getCacheDb()
         .then((db) => db.cachedEvents.bulkPut(serverEvents))
-        .catch(() => {});
+        .catch((err) => console.warn("Failed to cache events:", err));
       setEvents(serverEvents);
     } else {
       // Offline — try to load from cache
@@ -21,7 +21,7 @@ export function useCachedEvents(serverEvents: Event[]): Event[] {
         .then((cached) => {
           if (cached.length > 0) setEvents(cached);
         })
-        .catch(() => {});
+        .catch((err) => console.warn("Failed to load cached events:", err));
     }
   }, [serverEvents]);
 

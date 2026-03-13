@@ -106,6 +106,13 @@ export function formatMonthDayYear(d: Date): string {
   return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
 }
 
+export function eventToDate(event: { year: number; month: number | null; day: number | null }, yearsOnly: boolean): Date {
+  if (yearsOnly || !event.month || !event.day) {
+    return createUTCDate(event.year);
+  }
+  return createUTCDate(event.year, event.month - 1, event.day);
+}
+
 export function formatYear(year: number): string {
   if (year < 0) return Math.abs(year) + " B.C.";
   if (year === 0) return "1 B.C.";

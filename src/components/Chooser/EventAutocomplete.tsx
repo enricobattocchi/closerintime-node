@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import type { Event } from "@/lib/types";
 import { formatYear } from "@/lib/date-utils";
+import { capitalize } from "@/lib/string-utils";
 import CategoryIcon from "@/components/CategoryIcon";
 import { SearchIcon, AddCircleOutline, CloseIcon, EditIcon } from "@/components/Icon";
 import styles from "@/styles/Chooser.module.css";
@@ -27,10 +28,6 @@ function matchesQuery(event: Event, query: string): boolean {
   const tokens = tokenize(query);
   const searchable = `${event.name} ${event.year} ${event.type}`.toLowerCase();
   return tokens.every((t) => searchable.includes(t));
-}
-
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 function getRandomEvents(events: Event[], count: number): Event[] {
@@ -72,18 +69,19 @@ export default function EventAutocomplete({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
   const available = useMemo(
-    () => events.filter((e) => !selectedIds.includes(e.id)),
-    [events, selectedIds]
+    () => events.filter((e) => !selectedIdSet.has(e.id)),
+    [events, selectedIdSet]
   );
   const filtered = useMemo(
     () => {
       const base = query
         ? available.filter((e) => matchesQuery(e, query))
-        : randomEvents.filter((e) => !selectedIds.includes(e.id));
+        : randomEvents.filter((e) => !selectedIdSet.has(e.id));
       return base.slice(0, 10);
     },
-    [available, query, randomEvents, selectedIds]
+    [available, query, randomEvents, selectedIdSet]
   );
 
   // Reset highlight when query changes

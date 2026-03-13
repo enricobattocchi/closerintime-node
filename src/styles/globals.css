@@ -28,6 +28,16 @@
     --color-bg-hover: #383838;
     --color-primary-shadow: rgba(199, 91, 142, 0.4);
     --segment-lightness: 65%;
+
+    img[src*="wikipedia"] {
+      filter: invert(1);
+    }
+
+    input,
+    select,
+    textarea {
+      color-scheme: dark;
+    }
   }
 }
 
@@ -43,6 +53,16 @@ html[data-theme="dark"] {
   --color-bg-hover: #383838;
   --color-primary-shadow: rgba(199, 91, 142, 0.4);
   --segment-lightness: 65%;
+
+  img[src*="wikipedia"] {
+    filter: invert(1);
+  }
+
+  input,
+  select,
+  textarea {
+    color-scheme: dark;
+  }
 }
 
 *,
@@ -99,26 +119,4 @@ a {
 /* Remove default outlines only when not keyboard-navigating */
 :focus:not(:focus-visible) {
   outline: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) img[src*="wikipedia"] {
-    filter: invert(1);
-  }
-
-  html:not([data-theme="light"]) input,
-  html:not([data-theme="light"]) select,
-  html:not([data-theme="light"]) textarea {
-    color-scheme: dark;
-  }
-}
-
-html[data-theme="dark"] img[src*="wikipedia"] {
-  filter: invert(1);
-}
-
-html[data-theme="dark"] input,
-html[data-theme="dark"] select,
-html[data-theme="dark"] textarea {
-  color-scheme: dark;
 }
