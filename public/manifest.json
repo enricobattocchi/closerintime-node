@@ -5,7 +5,7 @@
   "id": "/",
   "start_url": "/",
   "display": "standalone",
-  "handle_links": "not-preferred",
+  "handle_links": "preferred",
   "theme_color": "#8B2252",
   "background_color": "#ffffff",
   "icons": [
