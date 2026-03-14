@@ -3,7 +3,6 @@ import { Source_Serif_4 } from "next/font/google";
 import "@/styles/globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ExternalLinkHandler from "@/components/ExternalLinkHandler";
 
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
@@ -58,7 +57,6 @@ export default function RootLayout({
           }}
         />
         <a href="#main-content" className="skip-link">Skip to content</a>
-        <ExternalLinkHandler />
         <Header />
         <main id="main-content">{children}</main>
         <Footer />
