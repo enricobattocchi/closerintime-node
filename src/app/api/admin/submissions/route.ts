@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getEventsStore, getSubmissionsStore } from "@/lib/db";
+import { isAuthorized } from "@/lib/auth";
 import type { Event, Submission } from "@/lib/types";
-
-function isAuthorized(request: NextRequest): boolean {
-  const auth = request.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) return false;
-  const token = auth.slice(7);
-  return token === process.env.ADMIN_TOKEN;
-}
 
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {

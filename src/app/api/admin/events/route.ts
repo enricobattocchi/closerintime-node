@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getEventsStore } from "@/lib/db";
+import { isAuthorized } from "@/lib/auth";
+import { EVENT_TYPES } from "@/lib/types";
 import type { Event } from "@/lib/types";
-
-function isAuthorized(request: NextRequest): boolean {
-  const auth = request.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) return false;
-  return auth.slice(7) === process.env.ADMIN_TOKEN;
-}
 
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
@@ -39,6 +35,33 @@ export async function PATCH(request: NextRequest) {
 
   if (typeof id !== "number") {
     return NextResponse.json({ error: "Event id is required" }, { status: 400 });
+  }
+
+  // Validate fields
+  const WIKIPEDIA_RE = /^https:\/\/[a-z]{2,}\.wikipedia\.org\/wiki\/[A-Za-z0-9_()%,.\-]+$/;
+  if (fields.name !== undefined && (typeof fields.name !== "string" || !fields.name.trim() || fields.name.length > 200)) {
+    return NextResponse.json({ error: "Invalid name: must be a non-empty string (max 200 chars)" }, { status: 400 });
+  }
+  if (fields.year !== undefined && (typeof fields.year !== "number" || !Number.isInteger(fields.year) || fields.year === 0)) {
+    return NextResponse.json({ error: "Invalid year: must be a non-zero integer" }, { status: 400 });
+  }
+  if (fields.month !== undefined && fields.month !== null && (typeof fields.month !== "number" || fields.month < 1 || fields.month > 12)) {
+    return NextResponse.json({ error: "Invalid month: must be 1-12 or null" }, { status: 400 });
+  }
+  if (fields.day !== undefined && fields.day !== null && (typeof fields.day !== "number" || fields.day < 1 || fields.day > 31)) {
+    return NextResponse.json({ error: "Invalid day: must be 1-31 or null" }, { status: 400 });
+  }
+  if (fields.type !== undefined && (typeof fields.type !== "string" || !EVENT_TYPES.includes(fields.type as typeof EVENT_TYPES[number]))) {
+    return NextResponse.json({ error: "Invalid type: must be one of " + EVENT_TYPES.join(", ") }, { status: 400 });
+  }
+  if (fields.enabled !== undefined && fields.enabled !== 0 && fields.enabled !== 1) {
+    return NextResponse.json({ error: "Invalid enabled: must be 0 or 1" }, { status: 400 });
+  }
+  if (fields.plural !== undefined && fields.plural !== 0 && fields.plural !== 1) {
+    return NextResponse.json({ error: "Invalid plural: must be 0 or 1" }, { status: 400 });
+  }
+  if (fields.link !== undefined && fields.link !== null && (typeof fields.link !== "string" || !WIKIPEDIA_RE.test(fields.link))) {
+    return NextResponse.json({ error: "Invalid link: must be a valid Wikipedia URL or null" }, { status: 400 });
   }
 
   const store = getEventsStore();

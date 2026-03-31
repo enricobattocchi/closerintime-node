@@ -72,6 +72,20 @@ describe("POST /api/submissions", () => {
     expect(json.error).toMatch(/wikipedia/i);
   });
 
+  it("rejects Wikipedia link with query string", async () => {
+    const res = await POST(makeRequest({ ...validBody, link: "https://en.wikipedia.org/wiki/Test?action=edit" }));
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toMatch(/wikipedia/i);
+  });
+
+  it("rejects name over 200 characters", async () => {
+    const res = await POST(makeRequest({ ...validBody, name: "A".repeat(201) }));
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toMatch(/name/i);
+  });
+
   it("accepts valid submission", async () => {
     const res = await POST(makeRequest(validBody, `accept-${Date.now()}`));
     expect(res.status).toBe(201);

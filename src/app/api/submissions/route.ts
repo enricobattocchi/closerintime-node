@@ -3,7 +3,7 @@ import { getSubmissionsStore } from "@/lib/db";
 import { EVENT_TYPES } from "@/lib/types";
 import type { Submission } from "@/lib/types";
 
-const WIKIPEDIA_RE = /^https:\/\/[a-z]{2,}\.wikipedia\.org\/wiki\/.+$/;
+const WIKIPEDIA_RE = /^https:\/\/[a-z]{2,}\.wikipedia\.org\/wiki\/[A-Za-z0-9_()%,.\-]+$/;
 const MAX_PER_HOUR = 5;
 
 const rateLimitMap = new Map<string, number[]>();
@@ -11,10 +11,11 @@ const rateLimitMap = new Map<string, number[]>();
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const hourAgo = now - 3600_000;
-  const timestamps = (rateLimitMap.get(ip) || []).filter((t) => t > hourAgo);
-  rateLimitMap.set(ip, timestamps);
-  if (timestamps.length >= MAX_PER_HOUR) return true;
+  const prev = rateLimitMap.get(ip);
+  const timestamps = prev ? prev.filter((t) => t > hourAgo) : [];
+  if (timestamps.length >= MAX_PER_HOUR) { rateLimitMap.set(ip, timestamps); return true; }
   timestamps.push(now);
+  rateLimitMap.set(ip, timestamps);
   return false;
 }
 
@@ -36,8 +37,8 @@ export async function POST(request: NextRequest) {
     type: unknown; plural: unknown; link: unknown;
   };
 
-  if (typeof name !== "string" || !name.trim()) {
-    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+  if (typeof name !== "string" || !name.trim() || name.trim().length > 200) {
+    return NextResponse.json({ error: "Name is required (max 200 characters)" }, { status: 400 });
   }
   if (typeof year !== "number" || !Number.isInteger(year) || year === 0) {
     return NextResponse.json({ error: "Valid year is required" }, { status: 400 });

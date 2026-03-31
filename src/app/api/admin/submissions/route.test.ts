@@ -5,6 +5,7 @@ const mockEventsSetJSON = vi.fn();
 const mockSubGet = vi.fn();
 const mockSubSetJSON = vi.fn();
 const mockSubList = vi.fn();
+const mockIsAuthorized = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   getEventsStore: () => ({
@@ -18,25 +19,25 @@ vi.mock("@/lib/db", () => ({
   }),
 }));
 
+vi.mock("@/lib/auth", () => ({
+  isAuthorized: (...args: unknown[]) => mockIsAuthorized(...args),
+}));
+
 vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-const ADMIN_TOKEN = "test-token-123";
-
 beforeEach(() => {
   vi.clearAllMocks();
-  process.env.ADMIN_TOKEN = ADMIN_TOKEN;
+  mockIsAuthorized.mockReturnValue(false);
 });
 
 const { GET, PATCH } = await import("./route");
 
-function makeRequest(method: string, body?: unknown, token?: string) {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (token) headers["authorization"] = `Bearer ${token}`;
+function makeRequest(method: string, body?: unknown) {
   return new Request("http://localhost/api/admin/submissions", {
     method,
-    headers,
+    headers: { "Content-Type": "application/json" },
     ...(body ? { body: JSON.stringify(body) } : {}),
   }) as unknown as import("next/server").NextRequest;
 }
@@ -47,18 +48,14 @@ describe("GET /api/admin/submissions", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 401 with wrong token", async () => {
-    const res = await GET(makeRequest("GET", undefined, "wrong"));
-    expect(res.status).toBe(401);
-  });
-
   it("returns submissions list", async () => {
+    mockIsAuthorized.mockReturnValue(true);
     mockSubList.mockResolvedValue({
       blobs: [{ key: "sub-1" }],
     });
     mockSubGet.mockResolvedValue({ name: "Test", status: "pending" });
 
-    const res = await GET(makeRequest("GET", undefined, ADMIN_TOKEN));
+    const res = await GET(makeRequest("GET"));
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data).toHaveLength(1);
@@ -73,6 +70,7 @@ describe("PATCH /api/admin/submissions", () => {
   });
 
   it("approves submission and creates event", async () => {
+    mockIsAuthorized.mockReturnValue(true);
     const submission = {
       name: "Test Event",
       year: 2000,
@@ -87,7 +85,7 @@ describe("PATCH /api/admin/submissions", () => {
     mockEventsGet.mockResolvedValue([{ id: 5 }]);
 
     const res = await PATCH(
-      makeRequest("PATCH", { key: "sub-1", action: "approve" }, ADMIN_TOKEN)
+      makeRequest("PATCH", { key: "sub-1", action: "approve" })
     );
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -96,13 +94,14 @@ describe("PATCH /api/admin/submissions", () => {
   });
 
   it("rejects submission and updates status", async () => {
+    mockIsAuthorized.mockReturnValue(true);
     mockSubGet.mockResolvedValue({
       name: "Test",
       status: "pending",
     });
 
     const res = await PATCH(
-      makeRequest("PATCH", { key: "sub-1", action: "reject" }, ADMIN_TOKEN)
+      makeRequest("PATCH", { key: "sub-1", action: "reject" })
     );
     expect(res.status).toBe(200);
     expect(mockSubSetJSON).toHaveBeenCalledWith("sub-1", expect.objectContaining({ status: "rejected" }));
